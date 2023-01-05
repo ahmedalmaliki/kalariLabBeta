@@ -1,5 +1,7 @@
 package com.example.kalarilab.Models;
 
+import com.example.kalarilab.R;
+
 import java.io.Serializable;
 
 public class AuthModel implements Serializable {
@@ -9,16 +11,19 @@ public class AuthModel implements Serializable {
     private String password;
     private String bio;
     private String gender;
-    private String birthdate;
+    private String birthdate = "When were you born?";
     private int levelReached;
     private int lessonReached;
     public int points;
     private int weeklyPoints;
     private int awardedPoints;
     private String awardedPostures ;
+    private int skinTone = R.drawable.sbmc1 ;
+    private int hair  = R.drawable.mh1;
+
 
     public AuthModel(String fullName, String email, String password, String bio, String gender, String birthdate, int levelReached,
-                     int lessonReached, int points, int weeklyPoints, int awardedPoints, String awardedPostures) {
+                     int lessonReached, int points, int weeklyPoints, int awardedPoints, String awardedPostures, int skinTone, int hair ) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -31,9 +36,27 @@ public class AuthModel implements Serializable {
         this.weeklyPoints = weeklyPoints;
         this.awardedPoints = awardedPoints;
         this.awardedPostures = awardedPostures;
+        this.skinTone = skinTone;
+        this.hair = hair;
     }
 
     public AuthModel() {
+    }
+
+    public int getSkinTone() {
+        return skinTone;
+    }
+
+    public void setSkinTone(int skinTone) {
+        this.skinTone = skinTone;
+    }
+
+    public int getHair() {
+        return hair;
+    }
+
+    public void setHair(int hair) {
+        this.hair = hair;
     }
 
     public String getFullName() {

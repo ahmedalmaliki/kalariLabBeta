@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -298,19 +299,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener , Pro
     @Override
     public void updateHomeFragment() {
         int badgeValue = imageBadgeView.getBadgeValue();
+        if (sessionManagement.returnNumOfAwardedPostures() < postures.size()){
+            imageBadgeView.setBadgeValue(badgeValue + numOfNewlyAddedPostures());
+
+        }
         if(awardedPostures.getAwardedPostures().length() != 0) {
             postures = new ArrayList<String>(Arrays.asList(awardedPostures.getAwardedPostures().split(",")));
+            replaceImmatureWithMature();
             Log.d(TAG, postures.toString());
         }
-        Log.d(TAG, postures.toString());
         getImage(postures.get(postures.size() - 1));
-       if (sessionManagement.returnNumOfAwardedPostures() < postures.size()){
-           imageBadgeView.setBadgeValue(badgeValue + numOfNewlyAddedPostures());
 
-       }
 
     }
     public void showPostureImage(String uri){
+        Log.d(TAG+"l", uri);
 
         if(!Objects.equals(uri, "")) {
             Log.d(TAG, uri);
@@ -338,7 +341,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener , Pro
                                 for(DataSnapshot ds: snapshot.getChildren()){
                                     if(Objects.equals(ds.getKey(), keyTag)){
                                         sessionManagement.saveLatestAwardedPostureUri(ds.getValue().toString());
-
+                                        Log.d(TAG+"l", ds.getValue().toString());
                                         Glide
                                                 .with(getActivity())
                                                 .load(ds.getValue()) // pass the image url
@@ -383,6 +386,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener , Pro
         awardedPostures = new AwardedPostures();
         progressTrackingSystem.getAwardedPostures(awardedPostures);
     }
+    private void replaceImmatureWithMature() {
+
+        for (Iterator<String> iterator = postures.iterator(); iterator.hasNext(); ) {
+            String value = iterator.next();
+            if (value.contains("Imature")) {
+                if(postures.contains(value.replace("Imature ", ""))){
+                    iterator.remove();
+
+                }
+            }
+        }
+    }
+
+
 }
 
 

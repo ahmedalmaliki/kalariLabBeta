@@ -41,6 +41,7 @@ public class LessonDisplayActivity extends AppCompatActivity {
     int currLevel;
     private androidx.appcompat.widget.Toolbar toolbar ;
 
+
     Uri currUri;
     StyledPlayerView styledPlayerView;
     MediaItem mediaItem;
@@ -51,13 +52,19 @@ public class LessonDisplayActivity extends AppCompatActivity {
     ProgressTrackingSystem progressTrackingSystem;
     SessionManagement sessionManagement;
     Map<String, String> alreadyWatchedLessons;
-
+    private long mPlaybackPosition;
+    private static final String PLAYBACK_POSITION_KEY = "playback_position";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson_display);
         Slidr.attach(this);
+
         initHooks();
+        if (savedInstanceState != null) {
+            // Get the playback position from the Bundle.
+            mPlaybackPosition = savedInstanceState.getLong(PLAYBACK_POSITION_KEY);
+        }
         progressBar.setVisibility(View.VISIBLE);
         bindings();
         getUri();
@@ -67,6 +74,8 @@ public class LessonDisplayActivity extends AppCompatActivity {
         try {
             exoPlayer.setMediaItem(mediaItem);
             exoPlayer.prepare();
+            
+            exoPlayer.seekTo(mPlaybackPosition);
             exoPlayer.play();
             progressBar.setVisibility(View.GONE);
             checkIfLessonAlreadyWatched();
@@ -277,7 +286,10 @@ public class LessonDisplayActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        exoPlayer.stop();
+        mPlaybackPosition = exoPlayer.getCurrentPosition();
+
+        // Stop playback.
+        exoPlayer.setPlayWhenReady(false);
         try {
             handler.removeCallbacksAndMessages(null);
 
@@ -287,9 +299,14 @@ public class LessonDisplayActivity extends AppCompatActivity {
 
         super.onStop();
     }
-    public void onBackPressed() {
-        //moves to previous page when back button is clicked
-        moveToMainActivity();
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Save the playback position in the Bundle.
+        outState.putLong(PLAYBACK_POSITION_KEY, mPlaybackPosition);
     }
 
 }

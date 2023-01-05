@@ -22,12 +22,13 @@ public class AuthEntry {
     private int weeklyPoints;
     private int awardedPoints;
     private String awardedPostures ;
-
+    private int skinTone;
+    private int hair;
     public AuthEntry() {
     }
 
 
-    public AuthEntry(String fullName, String email, String password, String bio, String gender, String birthdate, int levelReached, int lessonReached, int points, int weeklyPoints, int awardedPoints, String awardedPostures) {
+    public AuthEntry(String fullName, String email, String password, String bio, String gender, String birthdate, int levelReached, int lessonReached, int points, int weeklyPoints, int awardedPoints, String awardedPostures, int skinTone, int hair) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -40,6 +41,24 @@ public class AuthEntry {
         this.weeklyPoints = weeklyPoints;
         this.awardedPoints = awardedPoints;
         this.awardedPostures = awardedPostures;
+        this.skinTone = skinTone;
+        this.hair = hair;
+    }
+
+    public int getSkinTone() {
+        return skinTone;
+    }
+
+    public void setSkinTone(int skinTone) {
+        this.skinTone = skinTone;
+    }
+
+    public int getHair() {
+        return hair;
+    }
+
+    public void setHair(int hair) {
+        this.hair = hair;
     }
 
     public String getFullName() {

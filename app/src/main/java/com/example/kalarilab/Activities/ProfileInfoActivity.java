@@ -257,6 +257,8 @@ public class ProfileInfoActivity extends BaseActivity implements View.OnClickLis
                                     break;
                                 case "activationEmailSuccessfullySent":
                                    moveToAvatarActivity();
+                                   Log.d(TAG, "l");
+                                   break;
                             }
                         }
                     } )

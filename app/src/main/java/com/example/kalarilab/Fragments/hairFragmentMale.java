@@ -147,90 +147,112 @@ public class hairFragmentMale extends Fragment  implements View.OnClickListener 
             case R.id.mh1:
                 pickmh1();
                 setCurrentHair(R.drawable.mh1);
+                changeMarginTop();
                 break;
             case R.id.mh2:
                 pickmh2();
                 setCurrentHair(R.drawable.mh2);
+                changeMarginTop();
                 break;
             case R.id.mh3:
                 pickmh3();
                 setCurrentHair(R.drawable.mh3);
+                changeMarginTop();
                 break;
             case R.id.mh4:
                 pickmh4();
                 setCurrentHair(R.drawable.mh4);
+                changeMarginTop();
                 break;
             case R.id.mh5:
                 pickmh5();
                 setCurrentHair(R.drawable.mh5);
+                changeMarginTop();
                 break;
             case R.id.mh6:
                 pickmh6();
                 setCurrentHair(R.drawable.mh6);
+                changeMarginTop();
                 break;
             case R.id.mh7:
                 pickmh7();
                 setCurrentHair(R.drawable.mh7);
+                changeMarginTop();
                 break;
             case R.id.mh8:
                 pickmh8();
                 setCurrentHair(R.drawable.mh8);
+                changeMarginTop();
                 break;
             case R.id.mh9:
                 pickmh9();
                 setCurrentHair(R.drawable.mh9);
+                changeMarginTop();
                 break;
             case R.id.mh10:
                 pickmh10();
                 setCurrentHair(R.drawable.mh10);
+                changeMarginTop();
                 break;
             case R.id.mh11:
                 pickmh11();
                 setCurrentHair(R.drawable.mh11);
+                changeMarginTop();
                 break;
             case R.id.mh12:
                 pickmh12();
                 setCurrentHair(R.drawable.mh12);
+                changeMarginTop();
                 break;
             case R.id.mh13:
                 pickmh13();
                 setCurrentHair(R.drawable.mh13);
+                changeMarginTop();
                 break;
             case R.id.mh14:
                 pickmh14();
                 setCurrentHair(R.drawable.mh14);
+                changeMarginTop();
                 break;
             case R.id.mh15:
                 pickmh15();
                 setCurrentHair(R.drawable.mh15);
+                changeMarginTop();
                 break;
             case R.id.mh16:
                 pickmh16();
                 setCurrentHair(R.drawable.mh16);
+                changeMarginTop();
                 break;
             case R.id.mh17:
                 pickmh17();
                 setCurrentHair(R.drawable.mh17);
+                changeMarginTop();
                 break;
             case R.id.mh18:
                 pickmh18();
                 setCurrentHair(R.drawable.mh18);
+                changeMarginTop();
                 break;
             case R.id.mh19:
                 pickmh19();
                 setCurrentHair(R.drawable.mh19);
+                changeMarginTop();
                 break;
             case R.id.mh20:
                 pickmh20();
                 setCurrentHair(R.drawable.mh20);
+                changeMarginTop();
                 break;
             case R.id.mh21:
                 pickmh21();
                 setCurrentHair(R.drawable.mh21);
+                changeMarginTop();
                 break;
             case R.id.mh22:
                 pickmh22();
                 setCurrentHair(R.drawable.mh22);
+                changeMarginTop();
                 break;
 
 
@@ -384,5 +406,12 @@ public class hairFragmentMale extends Fragment  implements View.OnClickListener 
                 button.setBackground(getResources().getDrawable(R.drawable.image_button_border));
             }
         }
+    }
+    private void changeMarginTop() {
+        //Due to the inadequacy of our graphic designer I have to work around the problem.
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) hair.getLayoutParams();
+        params.topMargin = 0; // 5 pixels
+        hair.requestLayout();
+        sessionManagement.save_hair_marginTop(0);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.kalarilab.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.example.kalarilab.ViewModels.AuthViewModel;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,18 +83,12 @@ public class skinToneFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
        View view =  inflater.inflate(R.layout.fragment_skin_tone, container,  false);
         initHooks(view);
-       // observeData();
-        setGender();
+      // observeData();
         bindings();
         return view;
     }
 
-    private void setGender() {
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            gender = bundle.getString("gender", "M");
-        }
-    }
+
 
 
 
@@ -105,23 +101,27 @@ public class skinToneFragment extends Fragment implements View.OnClickListener {
         st4Btn.setOnClickListener(this);
         st5Btn.setOnClickListener(this);
     }
-    private void observeData() {
-        authViewModel.getmAuthModel().observe(getActivity(), new Observer<AuthModel>() {
-            @Override
-            public void onChanged(AuthModel authModel) {
-                authModel1 = authModel;
-            }
-        });
-    }
-    private void initHooks(View view) {
-//        authViewModel = new AuthViewModel();
-//        authViewModel.setActivity(getActivity());
-//        try {
-//            authViewModel.init();
+//    private void observeData() {
+//        authViewModel.getmAuthModel().observe(getActivity(), new Observer<AuthModel>() {
+//            @Override
+//            public void onChanged(AuthModel authModel) {
+//                authModel1 = authModel;
+//                gender = authModel.getGender();
 //
-//        }catch (Exception e){
-//            android.util.Log.d(TAG, e.getMessage());
-//        }
+//                changeIconsAccordingToGender();
+//
+//            }
+//        });
+//    }
+    private void initHooks(View view) {
+        authViewModel = new AuthViewModel();
+        authViewModel.setActivity(getActivity());
+        try {
+            authViewModel.init();
+
+        }catch (Exception e){
+            android.util.Log.d(TAG, e.getMessage());
+        }
         st1Btn = (ImageButton) view.findViewById(R.id.st1);
         st2Btn = (ImageButton) view.findViewById(R.id.st2);
         st3Btn = (ImageButton) view.findViewById(R.id.st3);
@@ -130,7 +130,35 @@ public class skinToneFragment extends Fragment implements View.OnClickListener {
         base =  getActivity().findViewById(R.id.base);
         sessionManagement = new SessionManagement(getActivity());
         imageButtons = Arrays.asList(st1Btn, st2Btn, st3Btn,st4Btn, st5Btn);
+        setGender();
+        changeIconsAccordingToGender();
     }
+
+    private void changeIconsAccordingToGender() {
+
+        if(Objects.equals(gender, "M") || Objects.equals(gender,"O")){
+            st1Btn.setImageResource(R.drawable.square_small_black_skin);
+            st2Btn.setImageResource(R.drawable.square_small_white_skin);
+            st3Btn.setImageResource(R.drawable.square_small_light_skin);
+            st4Btn.setImageResource(R.drawable.square_small_brown_skin);
+            st5Btn.setImageResource(R.drawable.square_small_darker_brown_skin);
+
+        }
+        else {
+            st1Btn.setImageResource(R.drawable.circle_small_black_skin);
+            st2Btn.setImageResource(R.drawable.circle_small_white_skin);
+            st3Btn.setImageResource(R.drawable.circle_small_light_skin);
+            st4Btn.setImageResource(R.drawable.circle_small_brown_skin);
+            st5Btn.setImageResource(R.drawable.circle_small_darker_brown_skin);
+        }
+    }
+    private void setGender() {
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            gender = bundle.getString("gender", "M");
+        }
+    }
+
 
     @Override
     public void onClick(View view) {

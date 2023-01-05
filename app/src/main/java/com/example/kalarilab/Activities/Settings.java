@@ -13,7 +13,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,12 +25,8 @@ import com.example.kalarilab.Models.AuthModel;
 import com.example.kalarilab.ViewModels.AdminPanelViewModel;
 import com.example.kalarilab.ViewModels.AuthViewModel;
 import com.example.kalarilab.db.AppDataBase;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.r0adkll.slidr.Slidr;
 
 import org.json.JSONException;
@@ -202,12 +197,23 @@ public class Settings extends BaseActivity implements View.OnClickListener {
         startActivity(new Intent(Settings.this, LogInActivity.class));
         sendBroadcastToPreventAccessToAllActivities();
         clearSharedPreferenceAvatarInfo();
-        db.clearAllTables();
+        clearDB();
         finish();
 
 
 
 
+    }
+
+    private void clearDB() {
+        Thread dbThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                db.clearAllTables();
+
+            }
+        });
+dbThread.start();
     }
 
     private void clearSharedPreferenceAvatarInfo() {
@@ -227,7 +233,10 @@ public class Settings extends BaseActivity implements View.OnClickListener {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 birthdate = makeDateToString(year, month, dayOfMonth);
+
                 birtDateBtn.setText(birthdate);
+
+
 
 
             }

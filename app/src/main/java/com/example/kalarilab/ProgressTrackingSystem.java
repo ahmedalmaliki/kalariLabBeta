@@ -454,7 +454,6 @@ public class ProgressTrackingSystem {
                 FirebaseDatabase.getInstance().getReference("Users").child(id).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Log.d(TAG,"1");
                         AuthModel authModel = snapshot.getValue(AuthModel.class);
                         if(authModel.getAwardedPostures() != null) {
                             awardedPostures1.setAwardedPostures(authModel.getAwardedPostures());
@@ -468,7 +467,7 @@ public class ProgressTrackingSystem {
                             progressTrackingSystemCallBack.updateHomeFragment();
 
                         }catch (Exception e){
-                            Log.d(TAG, e.getMessage());
+                            Log.d(TAG, "l");
                         }
                         synchronized (awardedPostures1) {
                             awardedPostures1.notifyAll();

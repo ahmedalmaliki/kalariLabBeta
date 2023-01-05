@@ -294,9 +294,10 @@
             app:ibv_badgeTextStyle="bold"
             app:ibv_fixedBadgeRadius="15dp"
             app:layout_constraintBottom_toBottomOf="@id/posturesCard"
-            app:layout_constraintEnd_toEndOf="@id/gl_postureAvatarLeftBorder"
-            app:layout_constraintStart_toStartOf="@id/gl_postureAvatarRightBorder"
+            app:layout_constraintEnd_toEndOf="@id/posturesCard"
+            app:layout_constraintStart_toStartOf="@id/posturesCard"
             app:layout_constraintTop_toTopOf="@id/gl_postureAvatarUpperBorder"
+            android:layout_margin="5dp"
             />
 <!--            <ImageView-->
 <!--                android:id="@+id/posture"-->

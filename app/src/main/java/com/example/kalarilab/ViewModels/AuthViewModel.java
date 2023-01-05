@@ -65,7 +65,7 @@ public class AuthViewModel extends ViewModel implements MainRepo.RepoCallBack{
                     mAuthModel.setValue(new AuthModel(authEntry.getFullName(), authEntry.getEmail(),
                             authEntry.getPassword(), authEntry.getBio(), authEntry.getGender(), authEntry.getBirthdate(),
                             authEntry.getLevelReached(), authEntry.getLessonReached(), authEntry.getPoints(), authEntry.getWeeklyPoints(),
-                            authEntry.getAwardedPoints(), authEntry.getAwardedPostures()));
+                            authEntry.getAwardedPoints(), authEntry.getAwardedPostures(), authEntry.getSkinTone(), authEntry.getHair()));
                 }catch (Exception e){
                     Log.d(TAG, e.getMessage());
                 }

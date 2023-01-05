@@ -1,6 +1,7 @@
 package com.example.kalarilab.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import androidx.fragment.app.Fragment;
 import com.example.kalarilab.R;
 import com.example.kalarilab.SessionManagement;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link hairFragmentFemale#newInstance} factory method to
@@ -22,12 +26,13 @@ public class hairFragmentFemale extends Fragment implements View.OnClickListener
 
     int currentHair;
     SessionManagement sessionManagement;
-
+    List<ImageButton> imageButtons;
+    private final static String TAG = "HairFragmentFemaleDebug";
 
 
 
     ImageButton fh1, fh2, fh3, fh4, fh5, fh6, fh7, fh8, fh9, fh10, fh11, fh12,
-            fh13, fh14, fh15, fh16, fh17, fh18,fh19, fh20, fh21, fh22, fh23;
+            fh13, fh14, fh15;
     ImageView hair;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -75,14 +80,10 @@ public class hairFragmentFemale extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_hair_female, container, false);
         initHooks(view);
-        getDefaultHair();
         bindings();
         return view;
     }
 
-    private void getDefaultHair() {
-        hair.setImageResource(sessionManagement.return_hair());
-    }
 
     private void bindings() {
         fh1.setOnClickListener(this);
@@ -100,26 +101,17 @@ public class hairFragmentFemale extends Fragment implements View.OnClickListener
         fh13.setOnClickListener(this);
         fh14.setOnClickListener(this);
         fh15.setOnClickListener(this);
-        fh16.setOnClickListener(this);
-        fh17.setOnClickListener(this);
-        fh18.setOnClickListener(this);
-        fh19.setOnClickListener(this);
-        fh20.setOnClickListener(this);
-        fh21.setOnClickListener(this);
-        fh22.setOnClickListener(this);
-        fh23.setOnClickListener(this);
-        sessionManagement = new SessionManagement(getActivity());
+
 
 
     }
     private void initHooks(View view) {
-        // listView = (ListView) view.findViewById(R.id.hairList);
-//        avatarListAdapter = new AvatarListAdapter(getContext(), R.layout.hair_list_layout, hairPictures);
-        fh1 = (ImageButton) view.findViewById(R.id.st1);
-        fh2 = (ImageButton) view.findViewById(R.id.st2);
-        fh3 = (ImageButton) view.findViewById(R.id.st3);
-        fh4 = (ImageButton) view.findViewById(R.id.st4);
-        fh5 = (ImageButton) view.findViewById(R.id.st5);
+
+        fh1 = (ImageButton) view.findViewById(R.id.fh1);
+        fh2 = (ImageButton) view.findViewById(R.id.fh2);
+        fh3 = (ImageButton) view.findViewById(R.id.fh3);
+        fh4 = (ImageButton) view.findViewById(R.id.fh4);
+        fh5 = (ImageButton) view.findViewById(R.id.fh5);
         fh6 =(ImageButton) view.findViewById(R.id.fh6);
         fh7 =(ImageButton) view.findViewById(R.id.fh7);
         fh8 =(ImageButton) view.findViewById(R.id.fh8);
@@ -130,130 +122,220 @@ public class hairFragmentFemale extends Fragment implements View.OnClickListener
         fh13 =(ImageButton) view.findViewById(R.id.fh13);
         fh14 =(ImageButton) view.findViewById(R.id.fh14);
         fh15 =(ImageButton) view.findViewById(R.id.fh15);
-        fh16 =(ImageButton) view.findViewById(R.id.fh16);
-        fh17 =(ImageButton) view.findViewById(R.id.fh17);
-        fh18 =(ImageButton) view.findViewById(R.id.fh18);
-        fh19 =(ImageButton) view.findViewById(R.id.fh19);
-        fh20 =(ImageButton) view.findViewById(R.id.fh20);
-        fh21 =(ImageButton) view.findViewById(R.id.fh21);
-        fh22 =(ImageButton) view.findViewById(R.id.fh22);
-        fh23 =(ImageButton) view.findViewById(R.id.fh23);
+
 
         hair =  getActivity().findViewById(R.id.hair);
         sessionManagement = new SessionManagement(getActivity());
+        imageButtons = Arrays.asList(fh1, fh2, fh3, fh4, fh5, fh6, fh7, fh8,
+                fh9, fh10, fh11, fh12, fh13, fh14,
+                fh15);
 
     }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.st1:
+            case R.id.fh1:
                 pickfh1();
-                currentHair = R.drawable.mh1;
-                setCurrentHair(R.drawable.mh1);
+                setCurrentHair(R.drawable.fh1);
+                changeMarginTop();
                 break;
-            case R.id.st2:
+            case R.id.fh2:
                 pickfh2();
-                currentHair = R.drawable.mh2;
-                setCurrentHair(R.drawable.mh2);
+                setCurrentHair(R.drawable.fh2);
+                changeMarginTop();
                 break;
-            case R.id.st3:
+            case R.id.fh3:
                 pickfh3();
-                currentHair = R.drawable.mh3;
-                setCurrentHair(R.drawable.mh3);
+                setCurrentHair(R.drawable.fh3);
+                changeMarginTop();
                 break;
-            case R.id.st4:
+            case R.id.fh4:
                 pickfh4();
-                currentHair = R.drawable.mh4;
-                setCurrentHair(R.drawable.mh4);
+                setCurrentHair(R.drawable.fh4);
+                changeMarginTop();
                 break;
-            case R.id.st5:
+            case R.id.fh5:
                 pickfh5();
-                currentHair = R.drawable.mh5;
-                setCurrentHair(R.drawable.mh5);
-
+                setCurrentHair(R.drawable.fh5);
+                changeMarginTop();
                 break;
+            case R.id.fh6:
+                pickfh6();
+                setCurrentHair(R.drawable.fh6);
+                changeMarginTop();
+                break;
+            case R.id.fh7:
+                pickfh7();
+                setCurrentHair(R.drawable.fh7);
+                changeMarginTop();
+                break;
+            case R.id.fh8:
+                pickfh8();
+                setCurrentHair(R.drawable.fh8);
+                changeMarginTop();
+                break;
+            case R.id.fh9:
+                pickfh9();
+                setCurrentHair(R.drawable.fh9);
+                changeMarginTop();
+                break;
+            case R.id.fh10:
+                pickfh10();
+                setCurrentHair(R.drawable.fh10);
+                changeMarginTop();
+                break;
+            case R.id.fh11:
+                pickfh11();
+                setCurrentHair(R.drawable.fh11);
+                changeMarginTop();
+                break;
+            case R.id.fh12:
+                pickfh12();
+                setCurrentHair(R.drawable.fh12);
+                changeMarginTop();
+                break;
+            case R.id.fh13:
+                pickfh13();
+                setCurrentHair(R.drawable.fh13);
+                changeMarginTop();
+                break;
+            case R.id.fh14:
+                pickfh14();
+                setCurrentHair(R.drawable.fh14);
+                changeMarginTop();
+                break;
+            case R.id.fh15:
+                pickfh15();
+                setCurrentHair(R.drawable.fh15);
+                changeMarginTop();
+                break;
+
 
 
         }
 
     }
-    private void pickfh5() {
-        setBorderForFH5();
-        hair.setImageResource(R.drawable.mh4);
+
+    private void pickfh15() {
+        hair.setImageResource(R.drawable.fh15);
+        setBorders(fh15);
     }
 
-    private void setBorderForFH5() {
-        fh1.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh2.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh3.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh5.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh4.setBackground(getResources().getDrawable(R.drawable.image_button_border_color));
+    private void pickfh14() {
+        hair.setImageResource(R.drawable.fh14);
+        setBorders(fh14);
     }
+
+    private void pickfh13() {
+        hair.setImageResource(R.drawable.fh13);
+        setBorders(fh13);
+    }
+
+    private void pickfh12() {
+        hair.setImageResource(R.drawable.fh12);
+        setBorders(fh12);
+    }
+
+    private void pickfh11() {
+        hair.setImageResource(R.drawable.fh11);
+        setBorders(fh11);
+    }
+
+    private void pickfh10() {
+        hair.setImageResource(R.drawable.fh10);
+        setBorders(fh10);
+    }
+
+    private void pickfh9() {
+        hair.setImageResource(R.drawable.fh9);
+        setBorders(fh9);
+    }
+
+    private void pickfh8() {
+        hair.setImageResource(R.drawable.fh8);
+        setBorders(fh8);
+    }
+
+    private void pickfh7() {
+        hair.setImageResource(R.drawable.fh7);
+        setBorders(fh7);
+    }
+
+    private void pickfh6() {
+        hair.setImageResource(R.drawable.fh6);
+        setBorders(fh6);
+
+    }
+
+
+
+    private void pickfh5() {
+        setBorders(fh5);
+        hair.setImageResource(R.drawable.fh5);
+    }
+
+
 
     private void pickfh4() {
-        setBorderForFH4();
-        hair.setImageResource(R.drawable.mh7);
+        setBorders(fh4);
+        hair.setImageResource(R.drawable.fh4);
     }
 
-    private void setBorderForFH4() {
-        fh1.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh2.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh3.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh5.setBackground(getResources().getDrawable(R.drawable.image_button_border_color));
-        fh4.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-    }
+
 
     private void pickfh3() {
 
-        setBorderForFH3();
-        hair.setImageResource(R.drawable.mh4);
+        setBorders(fh3);
+        hair.setImageResource(R.drawable.fh3);
     }
 
-    private void setBorderForFH3() {
-        fh1.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh2.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh3.setBackground(getResources().getDrawable(R.drawable.image_button_border_color));
-        fh5.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh4.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-    }
+
 
     private void pickfh2() {
-        setBorderForFH2();
-        hair.setImageResource(R.drawable.mh5);
+        setBorders(fh2);
+        hair.setImageResource(R.drawable.fh2);
     }
 
-    private void setBorderForFH2() {
-        fh1.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh2.setBackground(getResources().getDrawable(R.drawable.image_button_border_color));
-        fh3.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh5.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh4.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-    }
+
 
     private void pickfh1() {
-        setBorderForFH1();
-        hair.setImageResource(R.drawable.mh6);
+        Log.d(TAG, "l");
+        setBorders(fh1);
+        hair.setImageResource(R.drawable.fh1);
 
     }
 
-    private void setBorderForFH1() {
-        fh1.setBackground(getResources().getDrawable(R.drawable.image_button_border_color));
-        fh2.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh3.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh5.setBackground(getResources().getDrawable(R.drawable.image_button_border));
-        fh4.setBackground(getResources().getDrawable(R.drawable.image_button_border));
+
+
+    public void setCurrentHair(int currentHair) {
+        sessionManagement.save_hair(currentHair);
+
     }
+
     public int getCurrentHair() {
         return currentHair;
     }
 
-    public void setCurrentHair(int currentHair) {
-        this.currentHair = currentHair;
-    }
 
     @Override
     public void onStop() {
         super.onStop();
-        sessionManagement.save_hair(getCurrentHair());
+    }
+    private void setBorders(ImageButton btn){
+        for(ImageButton button : imageButtons){
+            if (button == btn){
+                button.setBackground(getResources().getDrawable(R.drawable.image_button_border_color));
+            }else{
+                button.setBackground(getResources().getDrawable(R.drawable.image_button_border));
+            }
+        }
+    }
+    private void changeMarginTop() {
+        //Due to the inadequacy of our graphic designer I have to work around the problem.
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) hair.getLayoutParams();
+        params.topMargin = 7; // 5 pixels
+        hair.requestLayout();
+        sessionManagement.save_hair_marginTop(7);
+
     }
 }

@@ -23,11 +23,14 @@ import com.example.kalarilab.R;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.r0adkll.slidr.Slidr;
 
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     private ExoPlayer exoPlayer;
     private MediaItem mediaItem;
     private int position;
-    private static final String TAG = "PostViewer";
+    private static final String TAG = "PostViewerDebug";
     private EditText awardedPoints;
     private Button mSendAwardedPointsBtn, mSendAwardedPosturesBtn, mDeletePostBtn;
     private ProgressTrackingSystem progressTrackingSystem;
@@ -50,7 +53,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     private List<String> postures = new ArrayList<>();
     private List<String> unAwardedPosture = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +120,8 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     private void getPostures() {
 
         AwardedPostures awardedPostures = new AwardedPostures();
-        progressTrackingSystem.getAwardedPostures(awardedPostures);
+        Log.d(TAG, adminPanelModel.getUrersIds().toString());
+        progressTrackingSystem.getAwardedPostures(adminPanelModel.getUrersIds().get(position),awardedPostures);
 
         Thread dataBaseThread = new Thread(new Runnable() {
 
@@ -192,7 +196,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     private void runVid() {
         try {
 
-            Log.d(TAG, adminPanelModel.getUris().get(position));
+            Log.d(TAG, adminPanelModel.getUrersIds().get(position ));
             mediaItem = MediaItem.fromUri(Uri.parse( adminPanelModel.getUris().get(position)));
 
             exoPlayer.setMediaItem(mediaItem);
@@ -222,13 +226,34 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     }
 
     private void deletePost() {
-        String targetEntry = adminPanelModel.getUrersIds().get(position)+adminPanelModel.getLevels().get(position)+adminPanelModel.getChallenges().get(position);
-        FirebaseDatabase.getInstance().getReference("Posts").child(targetEntry).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+        String vid_path = adminPanelModel.getUrersIds().get(position)+"/"+adminPanelModel.getLevels().get(position)+"/"+adminPanelModel.getChallenges().get(position);
+        StorageReference videoRef = storage.getReference().child(vid_path);
+        videoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(Void unused) {
-               finish();
+            public void onSuccess(Void aVoid) {
+                String targetEntry = adminPanelModel.getUrersIds().get(position)+adminPanelModel.getLevels().get(position)+adminPanelModel.getChallenges().get(position);
+                FirebaseDatabase.getInstance().getReference("Posts").child(targetEntry).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PostViewer.this, "Failed to delete vide, please contact the developer", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PostViewer.this, "Failed to delete vide, please contact the developer", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void sendPosture() {

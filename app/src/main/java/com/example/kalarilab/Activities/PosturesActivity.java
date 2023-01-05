@@ -12,6 +12,7 @@ import com.example.kalarilab.AwardedPostures;
 import com.example.kalarilab.PosturesAdapter;
 import com.example.kalarilab.ProgressTrackingSystem;
 import com.example.kalarilab.R;
+import com.example.kalarilab.SessionManagement;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +33,7 @@ public class PosturesActivity extends BaseActivity {
     private List<String> postures = new ArrayList<>();
     private final static String TAG = "PosturesActivityDebug";
      private Context context ;
+     private SessionManagement sessionManagement;
 
 
 
@@ -57,7 +60,7 @@ public class PosturesActivity extends BaseActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for(DataSnapshot ds: snapshot.getChildren()){
-                                if(!postures.contains(ds.getKey()) ){
+                                if(!postures.contains(ds.getKey()) && !Objects.requireNonNull(ds.getKey()).contains("Imature") ){
                                     if(!Objects.equals(ds.getKey(), "length")) {
                                         Log.d(TAG, ds.getKey());
 
@@ -65,7 +68,7 @@ public class PosturesActivity extends BaseActivity {
                                     }
                                }
                             }
-                            Log.d(TAG, postures.get(0));
+                            Log.d(TAG, postures.toString());
                             passPosturesToAdapter();
 
 
@@ -94,6 +97,7 @@ public class PosturesActivity extends BaseActivity {
          //passing info to the adapter to organise the number and type of postures opened
 
         mToolbar = findViewById(R.id.topAppBar);
+        sessionManagement = new SessionManagement(this);
 
     }
 
@@ -120,7 +124,11 @@ public class PosturesActivity extends BaseActivity {
 
                 }
                 postures = new ArrayList<String>(Arrays.asList(awardedPostures.getAwardedPostures().split(",")));
+                if(Objects.equals(postures.get(0), "")){ //when there is no awarded postures there will be only a comma in the list
+                    postures.remove(0);
+                }
                     getUnAwardedPostures();
+                    replaceImmatureWithMature();
 
             }
         });
@@ -134,6 +142,22 @@ public class PosturesActivity extends BaseActivity {
 
 
     }
+
+    private void replaceImmatureWithMature() {
+
+            for (Iterator<String> iterator = postures.iterator(); iterator.hasNext(); ) {
+                String value = iterator.next();
+                if (value.contains("Imature")) {
+                    if(postures.contains(value.replace("Imature ", ""))){
+                        iterator.remove();
+
+                    }
+                }
+                Log.d(TAG+"it", iterator.toString());
+                }
+            }
+
+
 
     private void passPosturesToAdapter() {
         Log.d(TAG, postures.toString());

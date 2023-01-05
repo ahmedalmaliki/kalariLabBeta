@@ -20,7 +20,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="-50dp"
+        android:layout_marginTop="-60dp"
         app:cardBackgroundColor="@color/KalariLAbSecondary"
         app:cardCornerRadius="60dp"
         app:layout_constraintBottom_toTopOf="@id/gl_cardViewLowerBorder"
@@ -90,7 +90,7 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:elevation="3dp"
         android:fontFamily="@font/roboto_regular"
         android:text=""
@@ -165,14 +165,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
+        app:layout_constraintGuide_percent="0.1" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/avatarLoBorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.4" />
 
     <ImageView
         android:id="@+id/hair"

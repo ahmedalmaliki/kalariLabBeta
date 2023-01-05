@@ -82,6 +82,7 @@ public class ChallengesActivity extends AppCompatActivity {
                 FirebaseDatabase.getInstance().getReference("Challenges").child(String.valueOf(sessionManagement.returnCurrLevel())).child(String.valueOf(sessionManagement.returnCurrChallenge())).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                         currUri = Uri.parse(snapshot.getValue().toString());
                         mediaItem = MediaItem.fromUri(currUri);
                         runVid();

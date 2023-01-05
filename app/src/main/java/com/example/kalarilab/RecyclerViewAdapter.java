@@ -38,6 +38,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             fullName = itemView.findViewById(R.id.userFullName);
             LevelAndChallenge = itemView.findViewById(R.id.challenge);
             parentLayout = itemView.findViewById(R.id.parent_layout);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = getAdapterPosition();
+
+                    // check if item still exists
+                    if(pos != RecyclerView.NO_POSITION){
+                        moveToPostViewerActivity(pos);
+                    }
+                }
+            });
 
         }
     }
@@ -55,20 +66,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mHolder = holder;
         holder.fullName.setText(adminPanelModel.getUsersFullNames().get(position));
         holder.LevelAndChallenge.setText(adminPanelModel.getLevels().get(position)+"/"+ adminPanelModel.getChallenges().get(position));
-        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                moveToPostViewerActivity();
-            }
-        });
+//        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                moveToPostViewerActivity();
+//            }
+//        });
     }
 
-    private void moveToPostViewerActivity() {
+    private void moveToPostViewerActivity(int pos) {
         Intent intent = new Intent(context, PostViewer.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.putExtra("adminPanelModel", adminPanelModel);
-        intent.putExtra("position", mHolder.getAbsoluteAdapterPosition());
+        intent.putExtra("position", pos);
         context.startActivity(intent);
         ((Activity)context).finish();
 

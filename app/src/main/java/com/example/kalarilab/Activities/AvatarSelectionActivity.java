@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer;
 
 import com.example.kalarilab.AvatarInfo;
 import com.example.kalarilab.Fragments.ClothesFragment;
+import com.example.kalarilab.Fragments.hairFragmentFemale;
 import com.example.kalarilab.Models.AuthModel;
 import com.example.kalarilab.R;
 import com.example.kalarilab.SessionManagement;
@@ -35,13 +36,13 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     private androidx.appcompat.widget.Toolbar toolbar;
     private ImageButton toMaleBtn, toFemaleBtn, hairMenuBtn, clothesMenuBtn, skinToneMenuBtn;
     private FrameLayout selectionMenuFrameLayout;
-    public static String gender;
+    public static String gender = "M" ;//setting initial gender as Male;
     public ImageView base, hair;
     public String currentFragment;
     private SessionManagement sessionManagement;
     private Button continueBtn;
     private AuthViewModel authViewModel;
-    private AuthModel authModel1 = new AuthModel();
+    private AuthModel authModel1 ;
     private String prev_activity = "";
     private final static String TAG = "AvatarSelectionActivityDebug";
 
@@ -52,6 +53,8 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
         Slidr.attach(this);
         initHooks();
         observeData();
+        defaultStart();
+        checkThePreviousActivity();
         bindings();
 
 
@@ -59,13 +62,17 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     }
 
     private void observeData() {
+        Log.d(TAG, "1" );
+
         authViewModel.getmAuthModel().observe(this, new Observer<AuthModel>() {
             @Override
             public void onChanged(AuthModel authModel) {
-               authModel1 = authModel;
-                gender = authModel1.getGender();
-                defaultStart();
-                checkThePreviousActivity();
+                if(authModel1 == null) {
+                    authModel1 = authModel;
+
+                    setUpStarterAvatar();
+                }
+
             }
         });
     }
@@ -73,12 +80,16 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     private void checkThePreviousActivity() {
 
         Bundle bundle = getIntent().getExtras();
-        prev_activity = bundle.getString("key", "registrationWithEmail");
-        if (bundle != null) {
+       if(bundle == null) {
+           return;
+       }
+
+        else {
             continueBtn.setVisibility(View.VISIBLE);
             continueBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     if(Objects.equals(bundle.getString("key"), "registrationWithEmail")) {
                         moveToSignInActivity();
 
@@ -96,84 +107,85 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     }
 
     private void defaultStart() {
+
         setCurrentFragment("S");
         pickGenderBtn();
         pickSkinToneMenu();
-        setUpStarterAvatar();
     }
 
 
 
     private void setUpStarterAvatar() {
+//
+//        if (authModel1.getSkinTone() == 0 && authModel1.getHair() == 0){
+//            switch (authModel1.getGender()){
+//                case "O":
+//
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
+//                    hair.setImageResource(R.drawable.mh1);
+//                    sessionManagement.save_hair(R.drawable.mh1);
+//                    break;
+//                case "M":
+//
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
+//                    hair.setImageResource(R.drawable.mh1);
+//                    sessionManagement.save_hair(R.drawable.mh1);
+//                    break;
+//                case "F":
+//                    base.setImageResource(R.drawable.sbf);
+//                    sessionManagement.save_skin_tone_drawable(R.drawable.sbf);
+//                    hair.setImageResource(R.drawable.fh1);
+//                    sessionManagement.save_hair(R.drawable.fh1);
+//                    break;
+//
+//
+//            }
+//        }else if(authModel1.getSkinTone() == 0 ){
+//            switch (authModel1.getGender()){
+//                case "O":
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
+//                    hair.setImageResource(sessionManagement.return_hair());
+//                case "M":
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
+//                    hair.setImageResource(sessionManagement.return_hair());
+//                    break;
+//                case "F":
+//                    base.setImageResource(R.drawable.sbf);
+//                    sessionManagement.save_skin_tone_drawable(R.drawable.sbf);
+//                    hair.setImageResource(sessionManagement.return_hair());
+//
+//
+//
+//            }}
+//        else if(authModel1.getHair() == 0){
+//            switch (authModel1.getGender()){
+//                case "O":
+//                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
+//                    hair.setImageResource(R.drawable.mh1);
+//                    sessionManagement.save_hair(R.drawable.mh1);
+//
+//                case "M":
+//                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
+//                    hair.setImageResource(R.drawable.mh1);
+//                    sessionManagement.save_hair(R.drawable.mh1);
+//                    break;
+//                case "F":
+//                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
+//                    hair.setImageResource(R.drawable.fh1);
+//                    sessionManagement.save_hair(R.drawable.fh1);
+//
+//
+//            }
+//        }
+//        else {
+            base.setImageResource(authModel1.getSkinTone());
+            hair.setImageResource(authModel1.getHair());
 
-        if (sessionManagement.return_skin_tone_drawable() == 0 && sessionManagement.return_hair() == 0){
-            switch (authModel1.getGender()){
-                case "O":
 
-                    base.setImageResource(R.drawable.sbmc1);
-                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
-                    hair.setImageResource(R.drawable.mh1);
-                    sessionManagement.save_hair(R.drawable.mh1);
-                    break;
-                case "M":
-
-                    base.setImageResource(R.drawable.sbmc1);
-                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
-                    hair.setImageResource(R.drawable.mh1);
-                    sessionManagement.save_hair(R.drawable.mh1);
-                    break;
-                case "F":
-                    base.setImageResource(R.drawable.sbf);
-                    sessionManagement.save_skin_tone_drawable(R.drawable.sbf);
-                    hair.setImageResource(R.drawable.mh1);
-                    sessionManagement.save_hair(R.drawable.mh1);
-
-
-
-            }
-        }else if(sessionManagement.return_skin_tone_drawable() == 0 ){
-            switch (authModel1.getGender()){
-                case "O":
-                    base.setImageResource(R.drawable.sbmc1);
-                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
-                    hair.setImageResource(sessionManagement.return_hair());
-                case "M":
-                    base.setImageResource(R.drawable.sbmc1);
-                    sessionManagement.save_skin_tone_drawable(R.drawable.sbmc1);
-                    hair.setImageResource(sessionManagement.return_hair());
-                    break;
-                case "F":
-                    base.setImageResource(R.drawable.sbf);
-                    sessionManagement.save_skin_tone_drawable(R.drawable.sbf);
-                    hair.setImageResource(sessionManagement.return_hair());
-
-
-
-            }}
-        else if(sessionManagement.return_hair() == 0){
-            switch (authModel1.getGender()){
-                case "O":
-                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
-                    hair.setImageResource(R.drawable.mh1);
-                    sessionManagement.save_hair(R.drawable.mh1);
-
-                case "M":
-                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
-                    hair.setImageResource(R.drawable.mh1);
-                    sessionManagement.save_hair(R.drawable.mh1);
-                    break;
-                case "F":
-                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
-                    hair.setImageResource(R.drawable.mh1);
-                    sessionManagement.save_hair(R.drawable.mh1);
-
-
-            }
-        }
-        else {
-            base.setImageResource(sessionManagement.return_skin_tone_drawable());
-            hair.setImageResource(sessionManagement.return_hair());
-        }
 
     }
 
@@ -260,10 +272,11 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     }
 
     private void pickClothesMenu() {
-        clothesMenuBtn.setImageResource(R.drawable.clothes);
+        clothesMenuBtn.setImageResource(R.drawable.clothes_colored);
         skinToneMenuBtn.setImageResource(R.drawable.circle_small);
         hairMenuBtn.setImageResource(R.drawable.hair);
         setCurrentFragment("C");
+
         runFragment("C");
     }
 
@@ -276,30 +289,16 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     }
 
     private void pickGenderBtn() {
-        switch (authModel1.getGender()){
-            case "O":
-                toFemaleBtn.setImageResource(R.drawable.female_grey);
-                toMaleBtn.setImageResource(R.drawable.male_color);
-                setGender("M");
-                break;
-            case "M":
-                toFemaleBtn.setImageResource(R.drawable.female_grey);
-                toMaleBtn.setImageResource(R.drawable.male_color);
-                setGender("M");
-                break;
-            case "F":
-                toFemaleBtn.setImageResource(R.drawable.female_color);
-                toMaleBtn.setImageResource(R.drawable.male_grey);
-                setGender("F");
+        toFemaleBtn.setImageResource(R.drawable.female_grey);
+        toMaleBtn.setImageResource(R.drawable.male_color);
+        setGender("M");
 
-                break;
-
-        }
 
         rerunCurrentFragment();
     }
 
     private void rerunCurrentFragment() {
+        Log.d("what is the actual fuck", getCurrentFragment());
        runFragment(getCurrentFragment());
     }
 
@@ -313,9 +312,15 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     private void pickToFemale() {
         toMaleBtn.setImageResource(R.drawable.male_grey);
         toFemaleBtn.setImageResource(R.drawable.female_color);
+        changeBaseAvatar();
         setGender("F");
         rerunCurrentFragment();
     }
+
+    private void changeBaseAvatar() {
+        
+    }
+
 
     private void pickHairMenu() {
         clothesMenuBtn.setImageResource(R.drawable.clothes);
@@ -345,14 +350,16 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
 
         switch (fragmentIntended){
             case "H":
-//                if (gender.equals("M")) {
-                    hairFragmentMale hairMenuFragment = new hairFragmentMale();
-                    hairMenuFragment.setArguments(bundle);
-                    transaction.replace(R.id.selectionMenu, hairMenuFragment);
-//                }else {
-//                    hairFragmentFemale hairFragmentFemale = new hairFragmentFemale();
-//                    transaction.replace(R.id.selectionMenu, hairFragmentFemale);
-//                }
+
+                if (gender.equals("M")) {
+                    hairFragmentMale hairFragmentMen = new hairFragmentMale();
+                    hairFragmentMen.setArguments(bundle);
+                    transaction.replace(R.id.selectionMenu, hairFragmentMen);
+                }else {
+                    hairFragmentFemale hairFragmentFemale = new hairFragmentFemale();
+                    hairFragmentFemale.setArguments(bundle);
+                    transaction.replace(R.id.selectionMenu, hairFragmentFemale);
+               }
                 break;
             case "E":
                 eyesFragment eyesFragment = new eyesFragment();
@@ -360,7 +367,6 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
                 transaction.replace(R.id.selectionMenu, eyesFragment);
                 break;
             case "S":
-                Log.d("kkkTAG", "dd");
                 skinToneFragment skinToneFragment = new skinToneFragment();
                 skinToneFragment.setArguments(bundle);
                 transaction.replace(R.id.selectionMenu,skinToneFragment);
@@ -369,6 +375,7 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
                 ClothesFragment clothesFragment = new ClothesFragment();
                 clothesFragment.setArguments(bundle);
                 transaction.replace(R.id.selectionMenu,clothesFragment);
+                Log.d("what is the actual fuck", ";");
                 break;
 
         }
@@ -396,12 +403,15 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
 
     private void uploadChosenAvatar() {
 
-        AvatarInfo avatarInfo = new AvatarInfo();
-        avatarInfo.setSkinTone(sessionManagement.return_skin_tone_drawable());
-        avatarInfo.setHair(sessionManagement.return_hair());
 
-        FirebaseDatabase.getInstance().getReference("Avatars").child(FirebaseAuth.getInstance().
-                getCurrentUser().getUid()).setValue(avatarInfo);
+
+        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
+                getCurrentUser().getUid()).child("skinTone").setValue(sessionManagement.return_skin_tone_drawable());
+
+
+        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
+                getCurrentUser().getUid()).child("hair").setValue(sessionManagement.return_hair());
+
 
     }
 

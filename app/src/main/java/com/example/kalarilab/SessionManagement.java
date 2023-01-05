@@ -15,7 +15,8 @@ public class SessionManagement implements Serializable {
     String USER_ID = "user_id";
     String COSTUMER_ID = "costumer_id";
 
-    String HAIR = "hair";
+    String HAIR = "m_hair";
+    String F_HAIR = "f_hair";
     String SKIN_TONE_DRAWABLE = "skin_tone_drawable";
     String SKIN_TONE = "skin_tone";
     String SECRET_KEY = "secret_key";
@@ -29,6 +30,7 @@ public class SessionManagement implements Serializable {
     String LATEST_AWARDED_POSTURE_URI = "latest_awarded_posture_uri";
     String  CLOTHES = "clothes";
     String ChallengesFragmentAlreadyVisited = "challengesFragmentAlreadyVisited";
+    String HAIR_MARGIN_TOP = "hairMarginTop";
     public SessionManagement(Context context) {
         this.sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, context.MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
@@ -87,6 +89,14 @@ public class SessionManagement implements Serializable {
         return sharedPreferences.getInt(HAIR, 0);
 
     }
+    public void save_hair_marginTop(int margin){
+        editor.putInt(HAIR_MARGIN_TOP,margin).commit();
+    }
+    public int return_hair_marginTop(){
+        return sharedPreferences.getInt(HAIR_MARGIN_TOP, 0);
+
+    }
+
 
     public void save_skin_tone_drawable(int skin_tone){
         editor.putInt(SKIN_TONE_DRAWABLE, skin_tone).commit();

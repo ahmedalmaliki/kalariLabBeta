@@ -1,5 +1,9 @@
 package com.example.kalarilab.Fragments;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -22,12 +25,6 @@ import com.example.kalarilab.R;
 import com.example.kalarilab.SessionManagement;
 import com.example.kalarilab.Models.AuthModel;
 import com.example.kalarilab.ViewModels.AuthViewModel;
-import com.facebook.internal.LockOnGetVariable;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +41,7 @@ public class ProfileFragment extends Fragment  {
     private AuthViewModel authViewModel;
     private AuthModel authModel1;
     private final static String TAG = "ProfileFragmentDebug";
+    private View view;
 
 
 
@@ -99,7 +97,7 @@ public class ProfileFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+         view =  inflater.inflate(R.layout.fragment_profile, container, false);
         initHooks(view);
         observeData();
         bindings();
@@ -177,59 +175,61 @@ public class ProfileFragment extends Fragment  {
 
 
     private void setUpAvatar() {
-        if (sessionManagement.return_skin_tone_drawable() == 0 && sessionManagement.return_hair() == 0){
-            switch (authModel1.getGender()){
-                case "O":
-                    base.setImageResource(R.drawable.sbmc1);
-                    hair.setImageResource(R.drawable.mh1);
-                case "M":
-                    base.setImageResource(R.drawable.sbmc1);
-                    hair.setImageResource(R.drawable.mh1);
-                    break;
-                case "F":
-                    base.setImageResource(R.drawable.sbf);
-                    hair.setImageResource(R.drawable.mh1);
+        changeMarginTop();
+//        if (authModel1.getSkinTone() == 0 && authModel1.getHair() == 0){
+//            switch (authModel1.getGender()){
+//                case "O":
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    hair.setImageResource(R.drawable.mh1);
+//                case "M":
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    hair.setImageResource(R.drawable.mh1);
+//                    break;
+//                case "F":
+//                    base.setImageResource(R.drawable.sbf);
+//                    hair.setImageResource(R.drawable.fh1);
+//
+//
+//
+//            }
+//        }else if(authModel1.getSkinTone() == 0 ){
+//            switch (authModel1.getGender()){
+//                case "O":
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    hair.setImageResource(sessionManagement.return_hair());
+//                case "M":
+//                    base.setImageResource(R.drawable.sbmc1);
+//                    hair.setImageResource(sessionManagement.return_hair());
+//                    break;
+//                case "F":
+//                    base.setImageResource(R.drawable.sbf);
+//                    hair.setImageResource(sessionManagement.return_hair());
+//
+//
+//
+//            }}
+//        else if(authModel1.getHair() == 0){
+//            switch (authModel1.getGender()){
+//                case "O":
+//                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
+//                    hair.setImageResource(sessionManagement.return_hair());
+//                case "M":
+//                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
+//                    hair.setImageResource(sessionManagement.return_hair());
+//                    break;
+//                case "F":
+//                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
+//                    hair.setImageResource(sessionManagement.return_hair());
+//
+//
+//
+//            }
+//        }
+//
+//        else {
+            base.setImageResource(authModel1.getSkinTone());
+            hair.setImageResource(authModel1.getHair());
 
-
-
-            }
-        }else if(sessionManagement.return_skin_tone_drawable() == 0 ){
-            switch (authModel1.getGender()){
-                case "O":
-                    base.setImageResource(R.drawable.sbmc1);
-                    hair.setImageResource(sessionManagement.return_hair());
-                case "M":
-                    base.setImageResource(R.drawable.sbmc1);
-                    hair.setImageResource(sessionManagement.return_hair());
-                    break;
-                case "F":
-                    base.setImageResource(R.drawable.sbf);
-                    hair.setImageResource(sessionManagement.return_hair());
-
-
-
-            }}
-        else if(sessionManagement.return_hair() == 0){
-            switch (authModel1.getGender()){
-                case "O":
-                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
-                    hair.setImageResource(sessionManagement.return_hair());
-                case "M":
-                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
-                    hair.setImageResource(sessionManagement.return_hair());
-                    break;
-                case "F":
-                    base.setImageResource(sessionManagement.return_skin_tone_drawable());
-                    hair.setImageResource(sessionManagement.return_hair());
-
-
-
-            }
-        }
-        else {
-            base.setImageResource(sessionManagement.return_skin_tone_drawable());
-            hair.setImageResource(sessionManagement.return_hair());
-        }
 
     }
 
@@ -265,5 +265,11 @@ public class ProfileFragment extends Fragment  {
     }
     private String getFullName(){
         return authModel1.getFullName();
+    }
+    private void changeMarginTop() {
+        //Due to the inadequacy of our graphic designer I have to work around the problem.
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) hair.getLayoutParams();
+        params.topMargin = sessionManagement.return_hair_marginTop();
+        hair.requestLayout();
     }
 }

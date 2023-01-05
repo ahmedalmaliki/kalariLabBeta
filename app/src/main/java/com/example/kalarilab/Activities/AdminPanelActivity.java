@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.example.kalarilab.Models.AdminPanelModel;
 import com.example.kalarilab.R;
@@ -16,12 +19,12 @@ import com.r0adkll.slidr.Slidr;
 
 import org.json.JSONException;
 
-public class AdminPanelActivity extends AppCompatActivity {
+public class AdminPanelActivity extends AppCompatActivity  {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private AdminPanelViewModel adminPanelViewModel;
-    private static final String TAG = "MainActivityDebug";
-
+    private static final String TAG = "AdminPanelActivityDebug";
+    private  RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +41,8 @@ public class AdminPanelActivity extends AppCompatActivity {
             @Override
             public void onChanged(AdminPanelModel adminPanelModel) {
 
-                RecyclerView recyclerView = findViewById(R.id.recyclerView);
-
+               recyclerView = findViewById(R.id.recyclerView);
+                Log.d(TAG, adminPanelModel.getUrersIds().toString());
                 recyclerView.setAdapter(new RecyclerViewAdapter(adminPanelModel, AdminPanelActivity.this));
                 recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
@@ -70,8 +73,7 @@ public class AdminPanelActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
-    }
+        }
 
     private void refreshCurrActivity() {
         finish();
@@ -79,6 +81,7 @@ public class AdminPanelActivity extends AppCompatActivity {
         startActivity(getIntent());
         overridePendingTransition(0, 0);
     }
+
 
 
 }

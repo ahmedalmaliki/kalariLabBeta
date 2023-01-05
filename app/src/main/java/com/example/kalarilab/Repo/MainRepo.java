@@ -169,7 +169,7 @@ public class MainRepo {
                                 authModel.getPassword(), authModel.getBio(), authModel.getGender(),
                                 authModel.getBirthdate(), authModel.getLevelReached(), authModel.getLessonReached(),
                                 authModel.getPoints(), authModel.getWeeklyPoints(), authModel.getAwardedPoints(),
-                                authModel.getAwardedPostures());
+                                authModel.getAwardedPostures(), authModel.getSkinTone(),authModel.getHair() );
                         updateAuthData(latestAuthEntry);
 
                         insertAuthData(latestAuthEntry);

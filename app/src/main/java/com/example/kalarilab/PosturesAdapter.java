@@ -33,6 +33,7 @@ public class PosturesAdapter extends  androidx.viewpager2.adapter.FragmentStateA
     private TextView title;
     private int NUM_ITEMS ;
     private SessionManagement sessionManagement ;
+    private String curr_uri= "";
     public PosturesAdapter(FragmentManager fragmentManager, Activity context, List<String> posturesTags, Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
 
@@ -115,12 +116,10 @@ public class PosturesAdapter extends  androidx.viewpager2.adapter.FragmentStateA
 
     private void getImageFromDB(String keyTag) {
 
-
         Thread dataBaseThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 if(!keyTag.contains("Silhouette")){
-                    Log.d(TAG, "0");
                     FirebaseDatabase.getInstance().getReference("Postures").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -151,15 +150,16 @@ public class PosturesAdapter extends  androidx.viewpager2.adapter.FragmentStateA
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             try {
-                                Log.d(TAG, keyTag);
 
                                 for(DataSnapshot ds: snapshot.getChildren()){
+
                                     if(Objects.equals(ds.getKey(), keyTag)){
                                         Glide
                                                 .with(context)
                                                 .load(ds.getValue()) // pass the image url
                                                 .into(postureImage);
                                     }
+
                                 }
                             }catch (Exception e){
                                 Log.d(TAG, "No Postures");
@@ -191,21 +191,16 @@ public class PosturesAdapter extends  androidx.viewpager2.adapter.FragmentStateA
 
 
     private void setUpFragmentLayout(int position) {
-
+        Log.d(TAG, posturesTags.toString());
         LayoutInflater inflater = context.getLayoutInflater();
         rowView = inflater.inflate(R.layout.fragment_posture, null, true);
         title = rowView.findViewById(R.id.PostureTitle);
         postureImage = rowView.findViewById(R.id.PostureImage);
-
         getPostureTitleFromTag(posturesTags.get(position));
         getPostureImageFromTag(posturesTags.get(position));
-        addTheLatestRewardedPostureToSharedPreferences(position);
     }
 
-    private void addTheLatestRewardedPostureToSharedPreferences(int position) {
 
-
-    }
 
 
 

@@ -51,11 +51,10 @@ public class Register extends BaseActivity implements View.OnClickListener {
     // the current authentication method is carried
 
     private static final String TAG = "authDebug";
-    private Button goToSignInBtn, registerBtn;
+    private Button goToSignInBtn, registerBtn, signInGmailBtn, TandSBtn;
     private EditText  emailEntry, passwordEntry, fullNameEntry;
     private ProgressBar progressBar;
     private TextInputLayout emailEntryParent, passwordEntryParent;
-    private Button signInGmailBtn;
     public SessionManagement sessionManagement;
     private TextView warningTextEmail, warningTextPassword, warningTextUserName;
     private SignInClient oneTapClient;
@@ -155,7 +154,7 @@ public class Register extends BaseActivity implements View.OnClickListener {
 
         passwordEntry.setOnClickListener(this);
         emailEntry.setOnClickListener(this);
-
+        TandSBtn.setOnClickListener(this);
 
     }
 
@@ -176,6 +175,7 @@ public class Register extends BaseActivity implements View.OnClickListener {
         fullNameEntry = findViewById(R.id.editTextFullName);
         authModel = new AuthModel();
         watchedLessons = new HashMap<>();
+        TandSBtn = findViewById(R.id.TandS);
 
 
     }
@@ -210,7 +210,14 @@ public class Register extends BaseActivity implements View.OnClickListener {
             case R.id.editTextUserName:
                 warningTextUserName.setText("");
                 break;
+            case R.id.TandS:
+                moveToTandSActivity();
         }
+    }
+
+    private void moveToTandSActivity() {
+        Intent intent = new Intent(this, TermsAndServices.class);
+        startActivity(intent);
     }
 
     private void oneTapSignInGoogle() {

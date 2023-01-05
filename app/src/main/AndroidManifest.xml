@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.kalarilab" >
+    package="com.example.kalarilab">
 
     <uses-feature android:name="android.hardware.camera2.full" />
     <uses-feature
         android:name="android.hardware.camera2.front"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -33,19 +38,10 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.KalariLab"
         android:usesCleartextTraffic="true"
-        tools:replace="android:supportsRtl" >
+        tools:replace="android:supportsRtl">
         <activity
-            android:name=".TermsAndServices"
-            android:exported="false" >
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".TermsAndServicesActivity"
-            android:exported="false"
-            android:label="@string/title_activity_terms_and_services"
-            android:theme="@style/Theme.KalariLab.NoActionBar" >
+            android:name=".Activities.TermsAndServices"
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -53,21 +49,21 @@
         <activity
             android:name=".Activities.PostViewer"
             android:exported="false"
-            android:parentActivityName=".Activities.AdminPanelActivity" >
+            android:parentActivityName=".Activities.AdminPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.AdminPanelActivity" />
         </activity>
         <activity
             android:name=".Activities.AdminPanelActivity"
-            android:exported="false" >
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".Fragments.Camera2VideoFragment"
-            android:exported="false" >
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -75,7 +71,7 @@
         <activity
             android:name=".Activities.ChallengesActivity"
             android:exported="false"
-            android:parentActivityName=".Activities.MainActivity" >
+            android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:exported="true"
@@ -84,11 +80,10 @@
         <activity
             android:name=".Activities.LessonDisplayActivity"
             android:exported="true"
-            android:parentActivityName=".Activities.MainActivity" >
+            android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" >
-            </meta-data>
+                android:value=".Activities.MainActivity"></meta-data>
         </activity>
 
         <meta-data
@@ -103,11 +98,10 @@
             android:name=".Activities.ChangePasswordActivity"
             android:exported="true"
             android:parentActivityName=".Activities.Settings"
-            android:theme="@style/Theme.KalariLab.SlidrActivityTheme" >
+            android:theme="@style/Theme.KalariLab.SlidrActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.Settings" >
-            </meta-data>
+                android:value=".Activities.Settings"></meta-data>
         </activity>
         <activity
             android:name=".Activities.Settings"
@@ -115,7 +109,7 @@
             android:theme="@style/Theme.KalariLab.SlidrActivityTheme" />
         <activity
             android:name=".SplashScreenActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -128,11 +122,10 @@
         <activity
             android:name=".Activities.PosturesActivity"
             android:exported="true"
-            android:parentActivityName=".Activities.MainActivity" >
+            android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" >
-            </meta-data>
+                android:value=".Activities.MainActivity"></meta-data>
         </activity>
         <activity
             android:name=".Activities.ProfileInfoActivity"
