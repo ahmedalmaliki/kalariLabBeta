@@ -31,6 +31,7 @@ public class SessionManagement implements Serializable {
     String  CLOTHES = "clothes";
     String ChallengesFragmentAlreadyVisited = "challengesFragmentAlreadyVisited";
     String HAIR_MARGIN_TOP = "hairMarginTop";
+    String TOKEN = "token";
     public SessionManagement(Context context) {
         this.sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, context.MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
@@ -86,8 +87,14 @@ public class SessionManagement implements Serializable {
         editor.putInt(HAIR, hair).commit();
     }
     public int return_hair(){
-        return sharedPreferences.getInt(HAIR, 0);
+        return sharedPreferences.getInt(HAIR, 2131231105);
 
+    }
+    public void save_token (String token){
+        editor.putString(TOKEN, token);
+    }
+    public String return_token (){
+        return sharedPreferences.getString(TOKEN, "");
     }
     public void save_hair_marginTop(int margin){
         editor.putInt(HAIR_MARGIN_TOP,margin).commit();

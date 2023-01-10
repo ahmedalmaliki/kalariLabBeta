@@ -108,7 +108,7 @@
 
                 />
             <Button
-                android:id="@+id/sendFeedbackTitle"
+                android:id="@+id/sendFeedbackBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Send Feedback to user"
@@ -122,7 +122,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sendFeedbackTitle"
+                app:layout_constraintTop_toBottomOf="@id/sendFeedbackBtn"
                 android:backgroundTint="@color/white"
                 android:focusable="true"
                 android:focusableInTouchMode="true"

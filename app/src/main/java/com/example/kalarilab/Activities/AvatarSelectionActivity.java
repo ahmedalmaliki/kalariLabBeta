@@ -91,7 +91,7 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
                 public void onClick(View view) {
 
                     if(Objects.equals(bundle.getString("key"), "registrationWithEmail")) {
-                        moveToSignInActivity();
+                        moveToMainActivity();
 
                     }else {
                         moveToMainActivity();
@@ -391,7 +391,7 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
         if(Objects.equals(prev_activity, "")){
             finish();
         }else {
-        moveToSignInActivity();
+       moveToMainActivity();
         }
     }
 
@@ -402,7 +402,6 @@ public class AvatarSelectionActivity extends BaseActivity implements View.OnClic
     }
 
     private void uploadChosenAvatar() {
-
 
 
         FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().

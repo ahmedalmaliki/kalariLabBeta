@@ -240,7 +240,7 @@ public class Register extends BaseActivity implements View.OnClickListener {
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, e.getMessage());
+                        setAlertDialog("Too many attempts please try again later", "Too many attempts!");
                         progressBar.setVisibility(View.GONE);
 
 
@@ -304,32 +304,32 @@ public class Register extends BaseActivity implements View.OnClickListener {
         authModel = new AuthModel();
         authModel.setFullName(fullName);
         authModel.setEmail(email);
-        authModel.setPassword( hashPassword(password));
+        authModel.setPassword( password);
         authModel.setPoints(0);
         authModel.setLessonReached(0);
         authModel.setLevelReached(0);
 
     }
 
-    public static String hashPassword(String password) throws NoSuchAlgorithmException {
-
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.reset();
-        md.update(password.getBytes());
-        byte[] mdArray = md.digest();
-        StringBuilder sb = new StringBuilder(mdArray.length * 2);
-        for(byte b : mdArray) {
-            int v = b & 0xff;
-            if(v < 16)
-                sb.append('0');
-            sb.append(Integer.toHexString(v));
-        }
-
-
-
-        return sb.toString();
-
-    }
+//    public static String hashPassword(String password) throws NoSuchAlgorithmException {
+//
+//        MessageDigest md = MessageDigest.getInstance("SHA-512");
+//        md.reset();
+//        md.update(password.getBytes());
+//        byte[] mdArray = md.digest();
+//        StringBuilder sb = new StringBuilder(mdArray.length * 2);
+//        for(byte b : mdArray) {
+//            int v = b & 0xff;
+//            if(v < 16)
+//                sb.append('0');
+//            sb.append(Integer.toHexString(v));
+//        }
+//
+//
+//
+//        return sb.toString();
+//
+//    }
 
 
 
@@ -396,6 +396,7 @@ public class Register extends BaseActivity implements View.OnClickListener {
 
 
     private void storeUserInfoInDB() {
+
             FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
                     getCurrentUser().getUid()).setValue(authModel).addOnCompleteListener(new OnCompleteListener<Void>() {
 
@@ -421,14 +422,15 @@ public class Register extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void setAlertDialog( String message) {
+    private void setAlertDialog( String message,String title) {
         if (!this.isFinishing()) {
             new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Connection Error.")
+                    .setTitle(title)
                     .setMessage(message)
 
                     // A null listener allows the button to dismiss the dialog and take no further action.
                     .setNegativeButton(android.R.string.ok, null)
+
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }

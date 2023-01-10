@@ -4,15 +4,28 @@ package com.example.kalarilab.Activities;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.kalarilab.Fragments.FragmentAdapter;
 import com.example.kalarilab.R;
 import com.example.kalarilab.SessionManagement;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.Locale;
+import java.util.Objects;
 
 public class MainActivity extends BaseActivity {
 
@@ -48,12 +61,41 @@ public class MainActivity extends BaseActivity {
         initHooks();//Initiates variables and objects
         bindings();// preform necessary bindings
         receiveIntentFragment();//recieves the fragment intended and runs it
-
+        onNewToken();
 
     }
 
+    private void onNewToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
 
+                        // Get new FCM registration token
+                        String token = task.getResult();
 
+                        // Log and toast
+                        Log.d(TAG, token);
+                        if(!Objects.equals(token, sessionManagement.return_token())){
+                            sessionManagement.save_token(token);
+                            sendTokenToDatabase(token);
+                        }
+                    }
+                });
+    }
+
+    private void sendTokenToDatabase(String token) {
+        try{
+            FirebaseDatabase.getInstance().getReference("Tokens").child(FirebaseAuth.getInstance().
+                    getCurrentUser().getUid()).setValue(token);
+        }catch (Exception e){
+            Log.d(TAG, e.getMessage());
+        }
+
+    }
 
 
     private void initHooks() {
@@ -151,4 +193,19 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkIfCompatibleWithGoogleServices();
+    }
+
+    private void checkIfCompatibleWithGoogleServices() {
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (resultCode == ConnectionResult.SUCCESS) {
+            // Google Play services is available on the device
+        } else {
+            GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this);
+        }
+
+    }
 }

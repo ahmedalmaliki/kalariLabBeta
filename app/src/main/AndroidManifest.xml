@@ -8,6 +8,7 @@
         android:name="android.hardware.camera2.front"
         android:required="false" />
 
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -38,7 +39,36 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.KalariLab"
         android:usesCleartextTraffic="true"
-        tools:replace="android:supportsRtl">
+        tools:replace="android:supportsRtl"
+
+        >
+        <service
+            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/KalariLabMain" />
+
+        <activity
+            android:name=".Activities.FeedbackActivity"
+            android:exported="false"
+            android:parentActivityName=".Activities.ChallengesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.ChallengesActivity" />
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".Activities.TermsAndServices"
             android:exported="false">
@@ -83,7 +113,7 @@
             android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity"></meta-data>
+                android:value=".Activities.MainActivity" />
         </activity>
 
         <meta-data
@@ -101,7 +131,7 @@
             android:theme="@style/Theme.KalariLab.SlidrActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.Settings"></meta-data>
+                android:value=".Activities.Settings" />
         </activity>
         <activity
             android:name=".Activities.Settings"
@@ -125,7 +155,7 @@
             android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity"></meta-data>
+                android:value=".Activities.MainActivity" />
         </activity>
         <activity
             android:name=".Activities.ProfileInfoActivity"

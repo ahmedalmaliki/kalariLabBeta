@@ -1,8 +1,11 @@
 package com.example.kalarilab.Activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -64,6 +67,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
     AuthModel authModel = new AuthModel();
     private SignInCredential credential;
     private String idToken;
+    private final static String TAG = "LoginActivityDebug";
 
 
     @Override
@@ -179,7 +183,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                 progressBar.setVisibility(View.VISIBLE);
                 break;
             case R.id.forgotPassword:
-                sendPasswordResetEmail();
+                resetPassword();
                 break;
 
 
@@ -188,8 +192,49 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
 
     }
 
-    private void sendPasswordResetEmail() {
+    private void resetPassword() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter your email.");
 
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            sendResetEmail(input.getText().toString().toLowerCase(Locale.ROOT).trim());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    private void sendResetEmail(String email) {
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            setAlertDialog("Reset email has been sent successfully.", "Sent");
+                        } else {
+                            // Error occurred
+                            setAlertDialog("Error sending password reset email. Check your e-mail is correct", "Error");
+
+                            Log.e(TAG, "Error sending password reset email. Check your e-mail is correct", task.getException());
+                        }
+                    }
+                });
     }
 
     private void oneTapSignInGoogle() {
@@ -211,6 +256,8 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, e.getMessage());
+                        setAlertDialog( "Too many attempts please try again later, please try again later!", "Too many attempts!" );
                         progressBar.setVisibility(View.GONE);
                     }
                 });
@@ -363,17 +410,12 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
 
 
     private void sendInfoToFireBase(String email, String password) throws NoSuchAlgorithmException {
-        Log.d("LLoginD", hashPassword(password));
 
-        mAuth.signInWithEmailAndPassword(email, hashPassword(password))
+        mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        try {
-                            Log.d("LLoginD", hashPassword(password));
-                        } catch (NoSuchAlgorithmException e) {
-
-                        }
+                        Log.d("LLoginD",password);
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
                             if (FirebaseAuth.getInstance().getCurrentUser().isEmailVerified() == true) {
@@ -384,7 +426,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                                 createSession(sessionManagement.returnUserId());
                                 moveToMainActivity();
                             }else {
-                                setAlertDialog("Please verify your e-mail by clicking on the activation link sent to your email!", "Activate your account!");
+                                setAlertDialog("Please verify your e-mail by clicking on the activation link sent to your email, you might find the e-mail in the spam folder!", "Activate your account!");
                             }
 
                         } else {
@@ -396,25 +438,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
                 });
     }
 
-    public static String hashPassword(String password) throws NoSuchAlgorithmException {
 
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.reset();
-        md.update(password.getBytes());
-        byte[] mdArray = md.digest();
-        StringBuilder sb = new StringBuilder(mdArray.length * 2);
-        for(byte b : mdArray) {
-            int v = b & 0xff;
-            if(v < 16)
-                sb.append('0');
-            sb.append(Integer.toHexString(v));
-        }
-
-
-
-        return sb.toString();
-
-    }
     private void moveToMainActivity() {
         //this method moves the UI to the main Activity.
         Intent intent = new Intent(LogInActivity.this, MainActivity.class);
@@ -507,12 +531,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
         startActivity(intent);
 
     }
-    private void moveToProfileInfoActivity() {
-        //tis method moves the UI to the sign up actvity
-        Intent intent = new Intent(LogInActivity.this, ProfileInfoActivity.class);
-        startActivity(intent);
 
-    }
 
 
 

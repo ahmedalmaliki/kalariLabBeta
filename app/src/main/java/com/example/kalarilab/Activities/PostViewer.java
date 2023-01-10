@@ -23,8 +23,11 @@ import com.example.kalarilab.R;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -47,7 +50,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     private int position;
     private static final String TAG = "PostViewerDebug";
     private EditText awardedPoints;
-    private Button mSendAwardedPointsBtn, mSendAwardedPosturesBtn, mDeletePostBtn;
+    private Button mSendAwardedPointsBtn, mSendAwardedPosturesBtn, mDeletePostBtn, mSendFeedbackToUser;
     private ProgressTrackingSystem progressTrackingSystem;
     private Spinner posturesSpinner;
     private List<String> postures = new ArrayList<>();
@@ -64,7 +67,6 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
             runVid();
             getPostures();
         Slidr.attach(this);
-
     }
 
     private void getUnAwardedPostures() {
@@ -171,6 +173,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
         mSendAwardedPointsBtn.setOnClickListener(this);
         mSendAwardedPosturesBtn.setOnClickListener(this);
         mDeletePostBtn.setOnClickListener(this);
+        mSendFeedbackToUser.setOnClickListener(this);
 
 
     }
@@ -192,6 +195,9 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
         mDeletePostBtn = findViewById(R.id.deletePost);
         mSendAwardedPosturesBtn = findViewById(R.id.send_awarded_postures);
+        mSendFeedbackToUser = findViewById(R.id.sendFeedbackBtn);
+        Log.d(TAG, String.valueOf(position));
+
     }
     private void runVid() {
         try {
@@ -221,12 +227,42 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
             case R.id.deletePost:
                 deletePost();
                 break;
+            case R.id.sendFeedbackBtn:
+                sendFeedBack();
+                break;
         }
+
+    }
+
+    private void sendFeedBack() {
+        EditText entry = findViewById(R.id.feedBack);
+        Log.d(TAG, adminPanelModel.getUrersIds().toString());
+        FirebaseDatabase.getInstance().getReference("FeedBack").child(adminPanelModel.getUrersIds().get(position)).child(adminPanelModel.getLevels().get(position)).child(adminPanelModel.getChallenges().get(position))
+                .setValue(entry.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(PostViewer.this, "Feedback sent", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PostViewer.this, "Feedback failure!", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
 
     }
 
     private void deletePost() {
         String vid_path = adminPanelModel.getUrersIds().get(position)+"/"+adminPanelModel.getLevels().get(position)+"/"+adminPanelModel.getChallenges().get(position);
+        Log.d(TAG, vid_path);
         StorageReference videoRef = storage.getReference().child(vid_path);
         videoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

@@ -1,26 +1,28 @@
 package com.example.kalarilab.Activities;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
 import com.example.kalarilab.Models.AuthModel;
 import com.example.kalarilab.R;
-import com.example.kalarilab.SessionManagement;
 import com.example.kalarilab.ViewModels.AuthViewModel;
-import com.google.android.exoplayer2.util.Log;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.FirebaseDatabase;
 import com.r0adkll.slidr.Slidr;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class ChangePasswordActivity extends AppCompatActivity  {
     private EditText currentPasswordEntry, newPasswordEntry;
@@ -57,17 +59,7 @@ public class ChangePasswordActivity extends AppCompatActivity  {
         resetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    if(CurrentPasswordEntryIsValid()){
-                        pushNewPassword();
-
-                    }
-                    else {
-                        Toast.makeText(ChangePasswordActivity.this, "Incorrect Password!", Toast.LENGTH_LONG).show();
-                    }
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+               initiateReset();
                 clearEntryFeilds();
             }
         });
@@ -80,21 +72,55 @@ public class ChangePasswordActivity extends AppCompatActivity  {
     }
 
     private void pushNewPassword() throws NoSuchAlgorithmException {
-        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
-                getCurrentUser().getUid()).child("password").setValue(hashPassword(newPasswordEntry.getText().toString()));
-        Toast.makeText(this, "Password is changed!", Toast.LENGTH_SHORT).show();
+
     }
 
-    private boolean CurrentPasswordEntryIsValid() throws NoSuchAlgorithmException {
-        if (authModel1.getPassword().equals(hashPassword(currentPasswordEntry.getText().toString()))){
-            return true;
-        }
-        else{
+    private void initiateReset() {
+        if(authModel1 != null) {
+            FirebaseAuth.getInstance().fetchSignInMethodsForEmail(authModel1.getEmail())
+                    .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                            if (task.isSuccessful()) {
+                                SignInMethodQueryResult result = task.getResult();
+                                List<String> signInMethods = result.getSignInMethods();
+                                if (signInMethods.contains(currentPasswordEntry.getText().toString())) {
+                                    // Password is correct
+                                    try {
+                                        pushNewPassword();
+                                    } catch (NoSuchAlgorithmException e) {
+                                        Toast.makeText(ChangePasswordActivity.this, "Unable to reset password!", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    // Password is incorrect
+                                    Toast.makeText(ChangePasswordActivity.this, "Entered password is incorrect", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                // Error occurred
+                                Exception error = task.getException();
+                                setAlertDialog("Conncetion error!", "error");
+
+                            }
+                        }
+                    });
 
 
-            return false;
         }
     }
+    private void setAlertDialog( String message,String title) {
+        if (!this.isFinishing()) {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle(title)
+                    .setMessage(message)
+
+                    // A null listener allows the button to dismiss the dialog and take no further action.
+                    .setNegativeButton(android.R.string.ok, null)
+
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+    }
+
 
 
 

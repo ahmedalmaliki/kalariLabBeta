@@ -276,21 +276,37 @@ dbThread.start();
 
     }
     private boolean infoHasChangedOrEmpty() {
-        if (authModel1.getFullName().equals("") || authModel1.getBirthdate().equals("")
-                || authModel1.getBio().equals("")){
-            return true;
-        }
-        else if (nameEdited() || bioEdited() || birthDateEdited() || genderEdited()){
+        if (authModel1 != null) {
+            if (authModel1.getFullName().equals("") || authModel1.getBirthdate().equals("")
+                    || authModel1.getBio().equals("")) {
+                return true;
+            } else if (nameEdited() || bioEdited() || birthDateEdited() || genderEdited()) {
 
-            return true ;
-        }
-        else{
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            setAlertDialog("Trouble fetching personal information please try again.", "Missing personal data!");
             return false;
         }
+
     }
 
 
+    private void setAlertDialog( String message,String title) {
+        if (!this.isFinishing()) {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle(title)
+                    .setMessage(message)
 
+                    // A null listener allows the button to dismiss the dialog and take no further action.
+                    .setNegativeButton(android.R.string.ok, null)
+
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+    }
     private boolean genderEdited() {
         return gendersSpinner.getSelectedItemPosition() != kalariLabUtils.getIndexOfGender(authModel1.getGender());
     }
