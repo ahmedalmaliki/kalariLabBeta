@@ -47,6 +47,8 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import com.example.kalarilab.AutoFitTextureView;
@@ -54,8 +56,11 @@ import com.example.kalarilab.MediaLink;
 import com.example.kalarilab.Models.AuthModel;
 import com.example.kalarilab.Post;
 import com.example.kalarilab.R;
+import com.example.kalarilab.Repo.MainRepo;
 import com.example.kalarilab.SessionManagement;
 import com.example.kalarilab.ViewModels.AuthViewModel;
+import com.example.kalarilab.db.AdminEntry;
+import com.example.kalarilab.db.AuthEntry;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -65,9 +70,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,11 +86,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Camera2VideoFragment extends androidx.fragment.app.Fragment
-        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, MainRepo.RepoCallBack {
 
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
 
@@ -91,11 +100,13 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
     private static final String TAG = "Camera2VideoFragment";
     private static final int REQUEST_VIDEO_PERMISSIONS = 1;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 2;
     private String VIDEO_DIRECTORY_NAME = "KalariLab";
     private AuthViewModel authViewModel;
     private AuthModel authModel1 = new AuthModel();
 
     private SessionManagement sessionManagement;
+    private Post post = new Post();
 
 
     private static final String[] VIDEO_PERMISSIONS = {
@@ -468,7 +479,6 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
 
     private void uploadVideoDownloadLink() {
         Thread uploadVideoDownloadLinkThread = new Thread(new Thread(new Runnable() {
-            Post post = new Post();
             @Override
             public void run() {
                 while (!mediaLink.changed()){
@@ -487,12 +497,8 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
                 post.setChallenge(String.valueOf(sessionManagement.returnCurrChallenge()));
                 post.setFullName(authModel1.getFullName());
                 post.setUri(mediaLink.getUri());
-                FirebaseDatabase.getInstance().getReference("Posts").child(sessionManagement.returnUserId()+sessionManagement.returnCurrLevel()+sessionManagement.returnCurrChallenge()).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(getActivity() != null) Toast.makeText(getActivity(), "video uploaded", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                getToken();
+
 
 
 
@@ -501,6 +507,12 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
         }));
         uploadVideoDownloadLinkThread.start();
 
+    }
+
+    private void getToken() {
+        MainRepo mainRepo = MainRepo.getInstance(getActivity()); //getting a singleton instance of the repository.
+        mainRepo.setRepoCallback(this);
+        mainRepo.getToken();
     }
 
     public Uri myUri(Uri originalUri){
@@ -515,6 +527,7 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
         return returnedUri;
     }
 
+
     private void sendVideoToDB() {
 
 
@@ -523,12 +536,19 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
 
             @Override
             public void run() {
+                if (mNextVideoAbsolutePath == null){
+                    Toast.makeText(getActivity(), "55", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getActivity(), mNextVideoAbsolutePath, Toast.LENGTH_SHORT).show();
+                }
                 final StorageReference reference = FirebaseStorage.getInstance().getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/"+
                         sessionManagement.returnCurrLevel()+"/"+sessionManagement.returnCurrChallenge());
                 reference.putFile(myUri(Uri.parse(mNextVideoAbsolutePath))).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         // Handle unsuccessful uploads
+                        Toast.makeText(getActivity(), exception.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -544,6 +564,12 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
                                     mediaLink.notifyAll();
 
                                 }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                             }
                         });
                     }
@@ -686,7 +712,6 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult");
         if (requestCode == REQUEST_VIDEO_PERMISSIONS) {
             if (grantResults.length == VIDEO_PERMISSIONS.length) {
                 for (int result : grantResults) {
@@ -699,6 +724,13 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        if (requestCode == REQUEST_VIDEO_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "granted");
+            } else {
+                Log.d(TAG, "denied");
+            }
         }
     }
 
@@ -715,8 +747,18 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
     /**
      * Tries to open a {@link CameraDevice}. The result is listened by `mStateCallback`.
      */
+    private void checkAndRequestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "01");
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+                    CAMERA_PERMISSION_REQUEST_CODE);
+        }
+    }
+
     @SuppressWarnings("MissingPermission")
     private void openCamera(int width, int height) {
+        checkAndRequestCameraPermission();
         if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
             requestVideoPermissions();
             return;
@@ -725,7 +767,6 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
             return;
         }
         try {
-            Log.d(TAG, "tryAcquire");
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
@@ -1034,7 +1075,35 @@ public class Camera2VideoFragment extends androidx.fragment.app.Fragment
 
     }
 
-/**
+    @Override
+    public void getPanelLiveData(List<String> fullNames, List<String> challenges, List<String> levels, List<String> uris, List<String> usersIds, List<String> tokens) throws JSONException {
+
+    }
+
+    @Override
+    public void getAdminsList(LiveData<List<AdminEntry>> adminsList) {
+
+    }
+
+    @Override
+    public void getAuthData(LiveData<AuthEntry> authEntryLiveData) {
+
+    }
+
+    @Override
+    public void getToken(String token) {
+        Log.d(TAG, token);
+        post.setToken(token);
+        FirebaseDatabase.getInstance().getReference("Posts").child(sessionManagement.returnUserId()+sessionManagement.returnCurrLevel()+sessionManagement.returnCurrChallenge()).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(getActivity() != null) Toast.makeText(getActivity(), "video uploaded", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    /**
  * Compares two {@code Size}s based on their areas.
  */
 static class CompareSizesByArea implements Comparator<Size> {

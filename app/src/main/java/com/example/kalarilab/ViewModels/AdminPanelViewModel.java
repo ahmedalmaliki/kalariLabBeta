@@ -53,10 +53,12 @@ public class AdminPanelViewModel extends ViewModel implements MainRepo.RepoCallB
     }
 
 
-    @Override
-    public void getPanelLiveData(List<String> fullNames, List<String> challenges,List<String> levels ,List<String> uris, List<String> usersIds) throws JSONException {
 
-        mPanelModel.setValue(new AdminPanelModel(fullNames, challenges, levels,uris, usersIds));
+
+    @Override
+    public void getPanelLiveData(List<String> fullNames, List<String> challenges, List<String> levels, List<String> uris, List<String> usersIds, List<String> tokens) throws JSONException {
+
+        mPanelModel.setValue(new AdminPanelModel(fullNames, challenges, levels,uris, usersIds, tokens));
 
     }
 
@@ -72,6 +74,11 @@ public class AdminPanelViewModel extends ViewModel implements MainRepo.RepoCallB
 
     @Override
     public void getAuthData(LiveData<AuthEntry> authEntryLiveData) {
+
+    }
+
+    @Override
+    public void getToken(String token) {
 
     }
 

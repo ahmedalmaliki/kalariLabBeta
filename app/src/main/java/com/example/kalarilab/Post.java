@@ -6,14 +6,16 @@ public class Post {
     private String fullName;
     private String userId;
     private String  uri;
+    private String token;
 
 
-    public Post(String userId, String level, String challenge, String fullName, String uri) {
+    public Post(String userId, String level, String challenge, String fullName, String uri, String token) {
         this.userId = userId;
         this.level = level;
         this.challenge = challenge;
         this.fullName = fullName;
         this.uri = uri;
+        this.token = token;
 
     }
 
@@ -58,5 +60,13 @@ public class Post {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

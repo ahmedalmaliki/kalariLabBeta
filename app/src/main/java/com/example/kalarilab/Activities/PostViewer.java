@@ -20,6 +20,7 @@ import com.example.kalarilab.AwardedPostures;
 import com.example.kalarilab.Models.AdminPanelModel;
 import com.example.kalarilab.ProgressTrackingSystem;
 import com.example.kalarilab.R;
+import com.example.kalarilab.SessionManagement;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
@@ -36,6 +37,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.r0adkll.slidr.Slidr;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,10 +70,10 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_viewer);
-            initHooks();
-            bindings();
-            runVid();
-            getPostures();
+        initHooks();
+        bindings();
+        runVid();
+        getPostures();
         Slidr.attach(this);
     }
 
@@ -77,15 +85,15 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
                 FirebaseDatabase.getInstance().getReference("Postures").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot ds: snapshot.getChildren()){
-                            if(!postures.contains(ds.getKey()) ){
-                                if(!Objects.equals(ds.getKey(), "length")) {
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            if (!postures.contains(ds.getKey())) {
+                                if (!Objects.equals(ds.getKey(), "length")) {
 
                                     unAwardedPosture.add(ds.getKey());
                                 }
                             }
                         }
-                     passPosturesToAdapter();
+                        passPosturesToAdapter();
 
 
                     }
@@ -107,11 +115,12 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
         }
 
     }
+
     private void passPosturesToAdapter() {
         PostViewer.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(PostViewer.this,android.R.layout.simple_spinner_item,unAwardedPosture);
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(PostViewer.this, android.R.layout.simple_spinner_item, unAwardedPosture);
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 posturesSpinner.setAdapter(spinnerArrayAdapter);
             }
@@ -119,18 +128,19 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
 
 
     }
+
     private void getPostures() {
 
         AwardedPostures awardedPostures = new AwardedPostures();
         Log.d(TAG, adminPanelModel.getUrersIds().toString());
-        progressTrackingSystem.getAwardedPostures(adminPanelModel.getUrersIds().get(position),awardedPostures);
+        progressTrackingSystem.getAwardedPostures(adminPanelModel.getUrersIds().get(position), awardedPostures);
 
         Thread dataBaseThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-                while (!awardedPostures.Imported()){
-                    synchronized (awardedPostures){
+                while (!awardedPostures.Imported()) {
+                    synchronized (awardedPostures) {
                         try {
 
                             Log.d("Waiting_thread", "waiting");
@@ -180,8 +190,8 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
 
 
     private void initHooks() {
-       adminPanelModel = (AdminPanelModel) getIntent().getSerializableExtra("adminPanelModel");
-       position = getIntent().getIntExtra("position", 0);
+        adminPanelModel = (AdminPanelModel) getIntent().getSerializableExtra("adminPanelModel");
+        position = getIntent().getIntExtra("position", 0);
         toolbar = findViewById(R.id.topAppBar);
         styledPlayerView = findViewById(R.id.playerView);
 
@@ -192,18 +202,19 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
         mSendAwardedPointsBtn = findViewById(R.id.send_awarded_points);
         progressTrackingSystem = new ProgressTrackingSystem(this, this);
         posturesSpinner = findViewById(R.id.posturesSpinner);
-        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         mDeletePostBtn = findViewById(R.id.deletePost);
         mSendAwardedPosturesBtn = findViewById(R.id.send_awarded_postures);
         mSendFeedbackToUser = findViewById(R.id.sendFeedbackBtn);
         Log.d(TAG, String.valueOf(position));
 
     }
+
     private void runVid() {
         try {
 
-            Log.d(TAG, adminPanelModel.getUrersIds().get(position ));
-            mediaItem = MediaItem.fromUri(Uri.parse( adminPanelModel.getUris().get(position)));
+            Log.d(TAG, adminPanelModel.getUrersIds().get(position));
+            mediaItem = MediaItem.fromUri(Uri.parse(adminPanelModel.getUris().get(position)));
 
             exoPlayer.setMediaItem(mediaItem);
             exoPlayer.prepare();
@@ -217,7 +228,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.send_awarded_points:
                 sendPoints();
                 break;
@@ -240,34 +251,34 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
         FirebaseDatabase.getInstance().getReference("FeedBack").child(adminPanelModel.getUrersIds().get(position)).child(adminPanelModel.getLevels().get(position)).child(adminPanelModel.getChallenges().get(position))
                 .setValue(entry.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
 
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(PostViewer.this, "Feedback sent", Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(PostViewer.this, "Feedback sent", Toast.LENGTH_SHORT).show();
 
-                }
-            }
+                        }
+                    }
 
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PostViewer.this, "Feedback failure!", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PostViewer.this, "Feedback failure!", Toast.LENGTH_SHORT).show();
 
 
-            }
-        });
+                    }
+                });
 
 
     }
 
     private void deletePost() {
-        String vid_path = adminPanelModel.getUrersIds().get(position)+"/"+adminPanelModel.getLevels().get(position)+"/"+adminPanelModel.getChallenges().get(position);
+        String vid_path = adminPanelModel.getUrersIds().get(position) + "/" + adminPanelModel.getLevels().get(position) + "/" + adminPanelModel.getChallenges().get(position);
         Log.d(TAG, vid_path);
         StorageReference videoRef = storage.getReference().child(vid_path);
         videoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                String targetEntry = adminPanelModel.getUrersIds().get(position)+adminPanelModel.getLevels().get(position)+adminPanelModel.getChallenges().get(position);
+                String targetEntry = adminPanelModel.getUrersIds().get(position) + adminPanelModel.getLevels().get(position) + adminPanelModel.getChallenges().get(position);
                 FirebaseDatabase.getInstance().getReference("Posts").child(targetEntry).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -299,12 +310,67 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
     private void sendPoints() {
         if (Integer.parseInt(awardedPoints.getText().toString()) < 30 && Integer.parseInt(awardedPoints.getText().toString()) != 0) {
             progressTrackingSystem.addAwardedPoints(Integer.parseInt(awardedPoints.getText().toString()), adminPanelModel.getUrersIds().get(position));
-        }else Toast.makeText(this, "Number of points is higher than the maximum", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(this, "Number of points is higher than the maximum", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void awardedPointsSuccessfully() {
         Toast.makeText(this, "Points awarded Successfully!", Toast.LENGTH_SHORT).show();
+
+        sendNotificationAwardedPoints();
+    }
+
+    private void sendNotificationAwardedPoints() {
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // Create the URL for the Firebase Function
+                    URL url = new URL("https://us-central1-kalarilab-85a4b.cloudfunctions.net/awardedPoints");
+
+                    // Open a connection to the Firebase Function
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    // Set the request method to "POST"
+                    connection.setRequestMethod("POST");
+
+                    // Add any necessary request headers
+                    connection.setRequestProperty("Content-Type", "application/json");
+
+                    // Write the request body
+                    connection.setDoOutput(true);
+                    DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                    JSONObject data = new JSONObject();
+                    data.put("awardedPoints", awardedPoints.getText().toString() );
+                    data.put("token", adminPanelModel.getTokens().get(position));
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("data", data);
+
+
+                    wr.writeBytes(jsonParam.toString());
+                    wr.flush();
+                    wr.close();
+
+                    // Get the response from the function
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == 200) {
+                        // Handle the successful execution of the function
+                        Log.d(TAG, "Function executed successfully");
+                    } else {
+                        // Handle the failure of the function execution
+                        Log.d(TAG, "Failed to execute function: " + responseCode);
+                    }
+                } catch (IOException | JSONException e) {
+                    Log.d(TAG, e.getMessage());
+                    Log.d(TAG, "Error triggering function", e);
+                }
+            }
+        });
+        networkThread.start();
+
+
     }
 
     @Override
@@ -344,6 +410,7 @@ public class PostViewer extends AppCompatActivity implements View.OnClickListene
         super.onStop();
         finish();
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

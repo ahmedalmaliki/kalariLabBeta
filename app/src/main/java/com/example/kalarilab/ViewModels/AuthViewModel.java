@@ -46,8 +46,10 @@ public class AuthViewModel extends ViewModel implements MainRepo.RepoCallBack{
 
 
 
+
+
     @Override
-    public void getPanelLiveData(List<String> fullNames, List<String> challenges, List<String> levels, List<String> uris, List<String> usersIds) throws JSONException {
+    public void getPanelLiveData(List<String> fullNames, List<String> challenges, List<String> levels, List<String> uris, List<String> usersIds, List<String> tokens) throws JSONException {
 
     }
 
@@ -72,5 +74,10 @@ public class AuthViewModel extends ViewModel implements MainRepo.RepoCallBack{
 
             }
         });
+    }
+
+    @Override
+    public void getToken(String token) {
+
     }
 }

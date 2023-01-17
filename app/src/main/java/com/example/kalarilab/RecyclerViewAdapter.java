@@ -3,6 +3,7 @@ package com.example.kalarilab;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +42,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int pos = getAdapterPosition();
+                    try {
+                        int pos = getAdapterPosition();
 
-                    // check if item still exists
-                    if(pos != RecyclerView.NO_POSITION){
-                        moveToPostViewerActivity(pos);
+                        // check if item still exists
+                        if (pos != RecyclerView.NO_POSITION) {
+                            moveToPostViewerActivity(pos);
+                        }
+                    }catch (Exception e){
+                        Log.d(TAG, e.getMessage());
+
                     }
                 }
             });

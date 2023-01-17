@@ -20,11 +20,14 @@ import com.example.kalarilab.db.AdminEntry;
 import com.example.kalarilab.db.AppDataBase;
 import com.example.kalarilab.db.AuthDao;
 import com.example.kalarilab.db.AuthEntry;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 
@@ -75,6 +78,7 @@ public class MainRepo {
                  List<String> fullNames = new ArrayList<>();
                  List<String> challenges = new ArrayList<>();
                 List<String> levels = new ArrayList<>();
+                List<String> tokens = new ArrayList<>();
                 FirebaseDatabase.getInstance().getReference("Posts").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -88,13 +92,14 @@ public class MainRepo {
                                 fullNames.add(post.getFullName());
                                 usersIDs.add(post.getUserId());
                                 uris.add(post.getUri());
+                                tokens.add(post.getToken());
 
 
 
 
 
                             }
-                            repoCallBack.getPanelLiveData(fullNames, challenges, levels,uris, usersIDs);
+                            repoCallBack.getPanelLiveData(fullNames, challenges, levels,uris, usersIDs, tokens);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -215,6 +220,23 @@ public class MainRepo {
 
 
     }
+    public void getToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                       repoCallBack.getToken(token);
+                    }
+                });
+    }
+
 
     private void getAdminsListFromServer() {
         Thread dataBaseThread = new Thread(new Runnable() {
@@ -301,9 +323,12 @@ public class MainRepo {
 
     public interface RepoCallBack {
 
-        void getPanelLiveData(List<String> fullNames, List<String> challenges,List<String> levels ,List<String> uris, List<String> usersIds) throws JSONException;
+
+        void getPanelLiveData(List<String> fullNames, List<String> challenges, List<String> levels, List<String> uris, List<String> usersIds, List<String> tokens) throws JSONException;
+
         void getAdminsList(LiveData<List<AdminEntry>> adminsList);
         void getAuthData(LiveData<AuthEntry> authEntryLiveData);
+        void getToken(String token);
 
     }
     private void setAlertDialog(Activity context, String message) {
